@@ -1,12 +1,29 @@
 .container {
-	height: 450px;
-	background-color: var(--bgSoft);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  	background-color: var(--bgSoft);
 	padding: 20px;
 	border-radius: 10px;
 }
 
+.chartContainer {
+  display: flex;
+  width: 100%;
+}
+
+.chartWrapper {
+  flex: 1;
+  height: 400px;
+}
+
+.textWrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .title {
-	font-weight: 200;
-	color: var(--textSoft);
-	margin-bottom: 20px;
+  margin-bottom: 20px;
 }
