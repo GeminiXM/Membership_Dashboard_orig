@@ -2,8 +2,8 @@
 
 import { Router } from "express";
 import {
-  getProducts,
-  getProduct,
+  getMember,
+  getUsage,
   createProduct,
   updateProduct,
   deleteProduct,
@@ -12,9 +12,7 @@ import {
 const router = Router();
 
 //Pulls from Controller
-router.get("/products", getProducts);
-router.get("/memberships/:id", getProduct);
-router.get("/dashboard/:id", getProduct);
+router.get("/memberships/:id", getMember, getUsage);
 router.post("/products", createProduct);
 router.put("/products/:id", updateProduct);
 router.delete("/products/:id", deleteProduct);

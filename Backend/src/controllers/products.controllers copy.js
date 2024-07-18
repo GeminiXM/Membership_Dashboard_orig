@@ -17,18 +17,44 @@ const readSQLFile = (filePath) => {
   });
 };
 
-export const getMember = async (req, res, next) => {
-  const sqlQuery = readSQLFile("database/select_web_proc_GetMembers.sql");
+export const getProducts = async (req, res) => {
+  const sqlQuery = readSQLFile("database/select.sql"); // Read SQL query from file
 
+  let pool;
   try {
-    const result = await req.pool
+    pool = await getConnection(); // Obtain the connection pool
+    const request = pool.request(); // Get a Request object from the pool
+    const result = await request.query(sqlQuery); // Execute the query
+
+    res.json(result.recordset); // Return the recordset as JSON response
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  } finally {
+    if (pool) {
+      try {
+        await pool.close(); // Close the pool
+      } catch (err) {
+        console.error("Error closing the pool", err);
+      }
+    }
+  }
+};
+
+//getting a SINGLE membership, id = /memberships/id
+export const getProduct = async (req, res) => {
+  const sqlQuery = readSQLFile("database/select.sql"); // Read SQL query from file
+
+  let pool;
+  try {
+    pool = await getConnection(); // Obtain the connection pool
+    const result = await pool
       .request()
       .input("id", sql.Char(10), req.params.id)
-      .query(sqlQuery);
-
+      .query(sqlQuery); // Execute the query
     if (result.recordset.length > 0) {
-      req.member = result.recordset; // Store result in req
-      next(); // Proceed to the next middleware
+      //return res.json(result.recordset[0]); // Return the recordset as JSON response
+      res.json(result.recordset); // Return the recordset as JSON response
     } else {
       return res
         .status(404)
@@ -37,31 +63,14 @@ export const getMember = async (req, res, next) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-//getting Usage on a SINGLE membership, id = /memberships/id
-// src/controllers/products.controllers.js
-export const getUsage = async (req, res, next) => {
-  const sqlQuery = readSQLFile("database/select_web_proc_GetUsage.sql");
-
-  try {
-    const result = await req.pool
-      .request()
-      .input("id", sql.Char(10), req.params.id)
-      .query(sqlQuery);
-
-    if (result.recordset.length > 0) {
-      req.usage = result.recordset; // Store result in req
-      next(); // Proceed to the next middleware
-    } else {
-      return res
-        .status(404)
-        .json({ message: `Usage for ID '${req.params.id}' not found` });
+  } finally {
+    if (pool) {
+      try {
+        await pool.close(); // Close the pool
+      } catch (err) {
+        console.error("Error closing the pool", err);
+      }
     }
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
