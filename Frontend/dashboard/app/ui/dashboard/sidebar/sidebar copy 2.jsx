@@ -123,58 +123,21 @@ const Sidebar = () => {
   if (error) return <div className={styles.container}>Error: {error.message}</div>;
   if (!membership || membership.length === 0) return <div className={styles.container}>No membership data found.</div>;
 
-  const primaryMember = membership.find(member => member.role.trim() === 'Primary');
-  const nonPrimaryMembers = membership.filter(member => member.role.trim() !== 'Primary');
-
-  if (!primaryMember) {
-    return <div>Error: Primary member not found</div>;
-  }
-
-  // Trim extra spaces from database columns
-    const trimmedCust_Code = primaryMember.cust_code.trim();
-  const trimmedPrimaryFirstName = primaryMember.fname.trim();
-  const trimmedPrimaryLastName = primaryMember.lname.trim();
-  const trimmedRole = primaryMember.role.trim();
-  const trimmedMembershipType = primaryMember.membership_type.trim();
 
   return (
     <aside>
       <div className={styles.container}>
-        <div className={styles.userDetail}>
-          <span className={styles.Primaryusername}>{trimmedPrimaryFirstName} {trimmedPrimaryLastName} - {trimmedCust_Code}</span>
-          <span className={styles.userTitle}>{trimmedRole} Member</span>
-          <span className={styles.userTitle}>{trimmedMembershipType} Membership</span>
-        </div>
-        <div className={styles.space}></div> {/* Add a div for spacing */}
-        
-        <ul className={styles.ulpad}>
-          {nonPrimaryMembers.map(member => (
-            <li key={member.mbr_code} className = {styles.lipad}>
-              <span className={styles.userTitle}>{member.fname} {member.lname} - {member.role} - {member.bdate}</span> 
-  
-              {/* Add more member details as needed */}
-            </li>
-          ))}
-        </ul>
-        <div className={styles.spacedbl}></div> {/* Add a div for spacing */}
-        </div>
+        {/* Display membership details */}
+        {membership.map(member => (
+          <div key={member.mbr_code} className={styles.member}>
+            <p>Name: {member.fname.trim()} {member.lname.trim()}</p>
+            <p>Role: {member.role.trim()}</p>
+            <p>Email: {member.email}</p>
+            {/* Add more member details as needed */}
+            <p>Cust Code: {member.cust_code.trim()}</p> {/* Display cust_code */}
+          </div>
+        ))}
 
-      {/* Sidebar content */}
-      <div className={styles.sidebarContent}>
-        <ul>
-           {menuItems.map(cat => (
-            <li key={cat.title}>
-              <span className={styles.cat}>{cat.title}</span>
-              <ul>
-                {cat.list.map(item => (
-                  <li key={item.title}>
-                    <MenuLink item={item} />
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
       </div>
     </aside>
   );

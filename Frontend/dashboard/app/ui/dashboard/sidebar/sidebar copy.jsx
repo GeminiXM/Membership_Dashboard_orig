@@ -89,39 +89,27 @@ const menuItems = [
     ],
   },
 ];
+
 const Sidebar = () => {
   const [membership, setMembership] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [nonPrimaryMembersList, setNonPrimaryMembersList] = useState([]); // Rename to avoid redeclaration
 
   useEffect(() => {
-    const fetchData = async () => {
+    const getMembership = async () => {
       try {
-        console.log('Fetching membership data...');
-        const membershipData = await fetchMembership('083376'); // Fetch membership data
-        console.log('Fetched membership data:', membershipData);
-
-        if (membershipData && membershipData.member && membershipData.member.length > 0) {
-          setMembership(membershipData.member);
-        } else {
-          console.log('No membership data found.');
-          setMembership([]); // Set an empty array if no data is found
-        }
-
-       } catch (error) {
-        console.error('Error fetching data:', error);
+        const data = await fetchMembership('083376'); // Replace with your dynamic ID retrieval logic
+        setMembership(data);
+      } catch (error) {
         setError(error.message);
-      } finally {
-        setLoading(false);
       }
     };
 
-    fetchData();
+    getMembership();
   }, []);
 
-  if (loading) return <div className={styles.container}>Loading...</div>;
-  if (error) return <div className={styles.container}>Error: {error.message}</div>;
-  if (!membership || membership.length === 0) return <div className={styles.container}>No membership data found.</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!membership) return <div>Loading...</div>;
 
   const primaryMember = membership.find(member => member.role.trim() === 'Primary');
   const nonPrimaryMembers = membership.filter(member => member.role.trim() !== 'Primary');
