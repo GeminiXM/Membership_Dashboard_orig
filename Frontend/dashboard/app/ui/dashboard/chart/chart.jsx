@@ -2,6 +2,8 @@
 
 import styles from './chart.module.css';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import React, { useEffect, useState } from 'react';
+import { fetchUsage } from '../services/usageService';
 
 const data = [
   {
@@ -42,6 +44,38 @@ const data = [
 ];
 
 const Chart = () => {
+  const [usage, setUsage] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log('Fetching usage data...');
+        const usageData = await fetchUsage('083376'); // Fetch usage data
+        console.log('Fetched usage data:', usageData);
+
+        if (usageData && usageData.usage && usageData.usage.length > 0) {
+          setUsage(usageData.usage);
+        } else {
+          console.log('No usage data found.');
+          setUsage([]); // Set an empty array if no data is found
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) return <div className={styles.container}>Loading...</div>;
+  if (error) return <div className={styles.container}>Error: {error}</div>;
+  if (!usage || usage.length === 0) return <div className={styles.container}>No usage data found.</div>;
+
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>Usage - Weekly Recap -- Keep It Up!</h2>
@@ -66,8 +100,19 @@ const Chart = () => {
             </LineChart>
           </ResponsiveContainer>
         </div>
-        <div className={styles.textWrapper}>
-          <span>stuff here</span>
+         <div className={styles.textWrapper}>
+          <div className={styles.headerRow}>
+            <p>Name</p>
+            <p>Club</p>
+            <p>Usage</p>
+          </div>
+          {usage.map((entry, index) => (
+            <div key={index} className={styles.row}>
+              <p>{entry.fname}</p>
+              <p>{entry.club_name}</p>
+              <p>{entry.usage}</p>
+            </div>
+          ))}
         </div>
       </div>
     </div>

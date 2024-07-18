@@ -19,12 +19,38 @@
 .textWrapper {
   flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .title {
   	font-weight: 200;
 	color: var(--textSoft);
 	margin-bottom: 20px;
+}
+
+.userTitle {
+	font-size: 12px;
+	color: var(--textSoft);
+}
+
+.lipad {
+	padding-bottom: 5px;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+}
+
+.row p {
+  margin: 0 10px;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  padding: 5px 0;
+  border-bottom: 2px solid #ccc;
 }
